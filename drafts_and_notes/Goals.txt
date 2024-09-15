@@ -1,0 +1,22 @@
+Goals
+- time based goals and quantity based
+time based
+	- time_units(hours/minutes/daily/weekly)
+	- quantity value(e.g 10)
+	- time_basis (e.g per week, per day, per month, per year)
+	- 
+
+quantity_goals
+	e.g read 5 courses per day
+	- quantity units(hours/minutes/daily)
+	- quanity_value (10)
+	- foreign_key of 5 courses
+	- time_for_completion (e.g on a daily basis so we check to see
+		if they've read the courses on the said day)
+	
+	- quizzes_id:
+	- foreign_key: goal_id
+
+- Scenario user has not completed goal
+	- notification pops up like ("Hey! timi, you have pending goals, click to view. User views goal and they see the details of the goal")
+	
