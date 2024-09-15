@@ -40,9 +40,6 @@ paths:
                   data:
                     type: object
                     properties:
-                      access_token:
-                        type: string
-                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
                       user:
                         type: object
                         properties:
@@ -81,6 +78,22 @@ paths:
                   message:
                     type: string
                     example: Registration unsuccessful
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Server error
+                  status_code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: Cannot process your request currently
 
   /auth/login:
     post:
@@ -116,26 +129,10 @@ paths:
                     properties:
                       access_token:
                         type: string
-                        example: eyJh...
-                      user:
-                        type: object
-                        properties:
-                          user_id:
-                            type: string
-                            format: uuid
-                            example: 123e4567-e89b-12d3-a456-426614174000
-                          first_name:
-                            type: string
-                            example: John
-                          last_name:
-                            type: string
-                            example: Doe
-                          email:
-                            type: string
-                            example: johndoe@example.com
-                          role:
-                            type: string
-                            example: agent
+                        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+                      message:
+                        type: string
+                        example: Login successsful
         '401':
           description: Login Unsuccessful
           content:
@@ -169,7 +166,69 @@ paths:
                   message:
                     type: string
                     example: Cannot process your request currently
-                      
+                    
+  /auth/verify-user/{user_id}:
+    post:
+      summary: Verify a new user with verification link
+      tags:
+        - Authentication
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+            description: Id of user
+
+      responses:
+        '200':
+          description: User verified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  status:
+                    type: string
+                    example: success
+                  status_code:
+                    type: integer
+                    example: 200
+                  data:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Verification successful
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid verification link or link has expired
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status_code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: Server error
+
   /profile/user/{user_id}:
     get:
       summary: Get User details
@@ -236,123 +295,6 @@ paths:
                             example: user
                   
   
-  /auth/profile/client/{id}:
-    patch:
-      summary: Update user profile for a client
-      tags:
-        - Profile Management
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-            description: ID of the client
-      requestBody:
-        description: User details and preferences
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ClientProfile'
-      responses:
-        '200':
-          description: User details updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Client Profile updated successfully
-            
-  
-  /auth/profile/agent/{agent_id}:
-    patch:
-      summary: Update user profile for an agent
-      tags:
-        - Profile Management
-      parameters:
-        - name: agent_id
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-            description: ID of the agent
-      requestBody:
-        description: Agent details
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AgentProfile'
-      responses:
-        '200':
-          description: User details updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: success
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Client Profile updated successfully
-  
-  /properties:
-    get:
-      summary: Get list of available properties
-      tags:
-        - Properties
-      responses:
-        '200':
-          description: A list of testimonials for the agent
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Properties'
-                  
-  
-
-  /agents/{agentId}/testimonials:
-    get:
-      summary: Get testimonials for an agent
-      tags:
-        - Agents
-      parameters:
-        - name: agentId
-          in: path
-          required: true
-          schema:
-            type: string
-          description: ID of the agent
-      responses:
-        '200':
-          description: A list of testimonials for the agent
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Testimonial'
-        '404':
-          description: Agent not found
 
 components:
   schemas:
@@ -370,31 +312,31 @@ components:
       properties:
         first_name:
           type: string
-          example: John 
+          example: Albert 
         last_name:
           type: string
-          example: Doe
+          example: Einstein
         gender:
           type: string
           example: Male
         phone:
           type: string
-          example: 08157443999
+          example: +234098765432
         age:
           type: integer
-          example: 26
+          example: 19
         email:
           type: string
           format: email
-          example: johndoe@example.com
+          example: albert.einsten@example.com
         password:
           type: string
           format: password
-          example: strongpassword123
+          example: somepassword
         role:
           type: string
-          enum: [client, agent, owner]
-          example: agent
+          enum: [user, admin]
+          example: user
 
     LoginUser:
       type: object
@@ -407,128 +349,6 @@ components:
           format: password
           example: string
 
-    Testimonial:
-      type: object
-      required:
-        - rating
-        - comment
-        - client
-        - agent
-      properties:
-        id:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        agent:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174000
-        client:
-          type: string
-          format: uuid
-          example: 123e4567-e89b-12d3-a456-426614174001
-        rating:
-          type: integer
-          description: Rating between 1 and 5
-          example: 4
-        comment:
-          type: string
-          description: Client's review of the agent
-          example: "The agent was very professional and helpful."
-        created_at:
-          type: string
-          format: date-time
-          example: '2023-08-24T14:15:22Z'
-    
-    Properties:
-      type: object
-      properties:
-        id: 
-          type: string
-          format: uuid 
-          example: 123e4567-e89b-12d3-a456-426614174000
-        name:
-          type: string
-          example: Bliss Hostel
-        location:
-          type: string
-          example: 4, Fancy Road, Stateline, Akure, Ondo State.
-        is_verified:
-          type: boolean
-          example: True
-        is_available:
-          type: boolean
-          example: True
-        rating:
-          type: integer
-          example: 5
-        price:
-          type: integer
-          example: 100000
-        apartment_type:
-          type: string
-          example: 2 bedroom
-        owner:
-          type: string
-          format: uuid
-          description: Owner of the property's id
-          example: 123e4567-e89b-12d3-a456-426614174000
-        agent:
-          type: string
-          format: uuid
-          description: Agent in charge of the property
-        description:
-          type: string
-          description: A brief description of the property and it's ammenties
-          example: A fully furnished 2 bedroom apartment, solar powered.
-          
-          
-    ClientProfile:
-      type: object
-      required:
-        - apartment_type
-        - location
-        - partner
-        
-      properties:
-        apartment_type:
-          type: string
-          example: 3 bedroom
-        location:
-          type: string
-          description: Geographical Location to conduct house search
-          example: Akure
-        partner:
-          type: boolean
-          description: Checking if the user would want a partner/roommate
-        partner_age:
-          type: integer
-          description: Age of the partner
-          example: 25
-        partner_gender:
-          type: string
-          example: Male
-          
-    
-    AgentProfile:
-      type: object
-      required:
-        - apartment_type
-        - location
-        - is_verified
-        
-      properties:
-        location:
-          type: string
-          description: Geographical Location where Agent works
-          example: Akure
-        is_verified:
-          type: boolean
-          description: Checking if the agent is verified
-        age:
-          type: integer
-          description: Age of the Agent
-          example: 25
           
           
 
@@ -539,5 +359,8 @@ components:
       bearerFormat: JWT
 servers:
   # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/ODEBODEZION/Studypal/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://app.swaggerhub.com/apis/ODEBODEZION/Studypal/1.0.0
