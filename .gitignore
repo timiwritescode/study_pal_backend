@@ -135,3 +135,4 @@ dist
 *.txt
 *.env
 /credentials.json
+etc/
