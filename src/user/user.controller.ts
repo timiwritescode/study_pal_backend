@@ -1,11 +1,17 @@
 import { Controller, Get, Patch } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
 
-@ApiTags("user")
-@Controller('user')
+dotenv.config({path: '.dev.env'})
+
+
+@ApiTags("/api/user")
+@Controller('/api/user')
 export class UserController {
     @Get('/profile')
     async getUserProfile() {
+        const data = process.env.ENVIRONMENT
+        console.log(data)
         return {message: "Not yet built"}
     }
 
