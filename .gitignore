@@ -133,3 +133,5 @@ dist
 # custom
 ./drafts_and_notes
 *.txt
+*.env
+/credentials.json
