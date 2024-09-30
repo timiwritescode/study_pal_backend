@@ -240,7 +240,7 @@ paths:
           required: true
           schema:
             type: string
-            format: uuid
+            format: string
             description: ID of the client
       responses:
         '200':
@@ -293,8 +293,62 @@ paths:
                           role:
                             type: string
                             example: user
-                  
+
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: failed
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Bad request
+
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: failed
+                  status_code:
+                    type: integer
+                    example: 500
+                  message:
+                    type: string
+                    example: An error occured! We are working on integer
   
+    patch:
+      summary: Edit user details
+      tags: 
+        - Profile Management
+      parameters:
+        - name: user_id
+          in: path
+          required: true 
+          schema:
+            type: string
+            format: string
+            description: ID of the client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditProfile'
+      responses:
+        '200':
+          description: Request successfuly completed
 
 components:
   schemas:
@@ -349,9 +403,26 @@ components:
           format: password
           example: string
 
-          
-          
-
+    EditProfile:
+      type: object
+      properties:
+        first_name:
+          type: string
+          example: Albert
+        last_name:
+            type: string
+            example: Einstein
+        institution:
+            type: string
+            example: string
+        avatar:
+          type: string
+          format: binary
+        course_of_study:
+          type: string
+          example: MIT
+  
+        
   securitySchemes:
     BearerAuth:
       type: http
