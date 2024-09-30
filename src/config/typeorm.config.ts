@@ -14,7 +14,9 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
                             process.env.PROD_DB :
                             process.env.DEV_DB
     async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
+        console.log(process.env.ENVIRONMENT)
         const certificatePath = join(__dirname, '..', '..', 'aiven_credentials.txt')
+        
         let aivenCloudCertificate = await fs.readFile(certificatePath, {encoding: 'utf-8'});
        
         const credentialPath = join(__dirname, '..', '..', 'credentials.json'); 
