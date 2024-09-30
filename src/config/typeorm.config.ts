@@ -16,7 +16,13 @@ export class PostgresConfigService implements TypeOrmOptionsFactory {
     async createTypeOrmOptions(): Promise<TypeOrmModuleOptions> {
         console.log(process.env.ENVIRONMENT)
         const certificatePath = join(__dirname, '..', '..', 'etc', 'secrets', 'aiven_credentials.txt')
-        
+        const path = join(__dirname, '..', '..')
+        const items = await fs.readdir(path, { withFileTypes: true });
+        const result = items.map(item => {
+            // Prefix folder names with a slash
+            return item.isDirectory() ? `${item.name}/` : item.name;
+        });
+        console.log(result)
         let aivenCloudCertificate = await fs.readFile(certificatePath, {encoding: 'utf-8'});
        
         const credentialPath = join(__dirname, '..', '..', 'etc', 'secrets', 'credentials.json'); 
